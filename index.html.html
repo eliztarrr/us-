@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Us - Red Social para Jóvenes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+
+  :root {
+    --verde: #4caf50;
+    --morado: #7e57c2;
+    --fondo: #f9f9fb;
+    --texto: #333;
+    --blanco: #fff;
+    --borde: #ddd;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+  }
+
+  /* SPLASH INICIO CON DEGRADADO Y "Us" */
+
+  #splash {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, var(--verde), var(--morado));
+    color: var(--blanco);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 6rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    opacity: 1;
+    transition: opacity 0.8s ease;
+    z-index: 10000;
+    user-select: none;
+  }
+
+  #splash.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* NAV */
+
+  nav {
+    background: var(--blanco);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 12px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+  }
+  nav button {
+    background: transparent;
+    border: none;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 8px 20px;
+    border-radius: 25px;
+    color: var(--morado);
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  nav button:hover {
+    background: var(--morado);
+    color: var(--blanco);
+  }
+  nav button.active {
+    background: var(--verde);
+    color: var(--blanco);
+    box-shadow: 0 0 8px var(--verde);
+  }
+  #logoutBtn {
+    margin-left: auto;
+    background: var(--morado);
+    color: var(--blanco);
+    font-weight: 700;
+  }
+  #logoutBtn:hover {
+    background: var(--verde);
+  }
+
+  /* PAGINAS */
+
+  .page {
+    max-width: 700px;
+    margin: 30px auto;
+    background: var(--blanco);
+    padding: 20px 25px;
+    border-radius: 14px;
+    box-shadow: 0 6px 15px rgba(126, 87, 194, 0.15);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(30px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .page.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  /* FORMULARIOS */
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  input[type="text"],
+  input[type="password"],
+  input[type="url"],
+  input[type="file"] {
+    padding: 12px 15px;
+    font-size: 1rem;
+    border: 2px solid var(--borde);
+    border-radius: 12px;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="password"]:focus,
+  input[type="url"]:focus,
+  input[type="file"]:focus {
+    border-color: var(--verde);
+    outline: none;
+  }
+  button {
+    background: var(--verde);
+    color: var(--blanco);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: var(--morado);
+  }
+
+  /* POSTS */
+
+  .post {
+    background: var(--fondo);
+    border-radius: 14px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(126, 87, 194, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+  .post:hover {
+    transform: scale(1.03);
+  }
+  .post img {
+    width: 100%;
+    display: block;
+    border-bottom: 1px solid var(--borde);
+  }
+  .post p {
+    padding: 10px 15px;
+    margin: 0;
+  }
+  .post small {
+    display: block;
+    padding-left: 15px;
+    padding-bottom: 10px;
+    font-style: italic;
+    color: #666;
+  }
+
+  /* PERFIL */
+
+  #profilePicPreview {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--verde);
+    display: block;
+    margin-bottom: 15px;
+  }
+
+  /* MOODBOARD */
+
+  #moodboardImages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  #moodboardImages img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(126, 87, 194, 0.15);
+  }
+
+  /* MAPA */
+
+  #map {
+    width: 100%;
+    height: 300px;
+    border-radius: 14px;
+    margin-top: 20px;
+    box-shadow: 0 6px 15px rgba(126, 87, 194, 0.2);
+  }
+
+</style>
+</head>
+<body>
+
+<!-- Splash con "Us" -->
+<div id="splash">Us</div>
+
+<!-- Login -->
+<div id="login" class="page active">
+  <h2>Iniciar Sesión</h2>
+  <form id="loginForm">
+    <input type="text" id="usernameInput" placeholder="Nombre de usuario" required />
+    <input type="password" id="passwordInput" placeholder="Contraseña" required />
+    <button type="submit">Entrar</button>
+  </form>
+</div>
+
+<!-- Navegación -->
+<nav style="display:none;">
+  <button data-target="feed" class="active">Inicio</button>
+  <button data-target="profile">Perfil</button>
+  <button data-target="moodboard">Moodboard</button>
+  <button data-target="map">Mapa</button>
+  <button id="logoutBtn">Cerrar Sesión</button>
+</nav>
+
+<!-- Feed -->
+<div id="feed" class="page">
+  <h2>Feed</h2>
+  <div id="postsContainer"></div>
+
+  <h3>Crear Post</h3>
+  <form id="uploadForm">
+    <input type="url" id="postImage" placeholder="URL de la imagen" required />
+    <input type="text" id="postText" placeholder="Texto del post" required />
+    <button type="submit">Publicar</button>
+  </form>
+</div>
+
+<!-- Perfil -->
+<div id="profile" class="page">
+  <h2>Perfil de <span id="profileUsername"></span></h2>
+  <img id="profilePicPreview" src="" alt="Foto de perfil" style="display:none" />
+  <form id="profilePicForm">
+    <label>Subir foto de perfil:</label>
+    <input type="file" id="profilePicInput" accept="image/*" />
+  </form>
+  <p>Posts: <span id="postCount">0</span></p>
+  <p>Seguidores: <span id="followersCount">0</span></p>
+  <p>Siguiendo: <span id="followingCount">0</span></p>
+  <h3>Mis Posts</h3>
+  <div id="profilePosts"></div>
+</div>
+
+<!-- Moodboard -->
+<div id="moodboard" class="page">
+  <h2>Moodboard</h2>
+  <form id="moodboardForm">
+    <input type="url" id="moodboardImageUrl" placeholder="URL de la imagen para moodboard" />
+    <button type="submit">Agregar imagen</button>
+  </form>
+  <div id="moodboardImages"></div>
+</div>
+
+<!-- Mapa -->
+<div id="map" class="page" style="display:none;"></div>
+
+<script>
+  const splash = document.getElementById('splash');
+  const loginPage = document.getElementById('login');
+  const loginForm = document.getElementById('loginForm');
+  const usernameInput = document.getElementById('usernameInput');
+  const passwordInput = document.getElementById('passwordInput');
+
+  const nav = document.querySelector('nav');
+  const navButtons = nav.querySelectorAll('button[data-target]');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  const pages = document.querySelectorAll('.page');
+  const postsContainer = document.getElementById('postsContainer');
+
+  const profileUsername = document.getElementById('profileUsername');
+  const postCount = document.getElementById('postCount');
+  const followersCount = document.getElementById('followersCount');
+  const followingCount = document.getElementById('followingCount');
+  const profilePosts = document.getElementById('profilePosts');
+
+  const profilePicInput = document.getElementById('profilePicInput');
+  const profilePicPreview = document.getElementById('profilePicPreview');
+
+  const moodboardForm = document.getElementById('moodboardForm');
+  const moodboardImageUrl = document.getElementById('moodboardImageUrl');
+  const moodboardImages = document.getElementById('moodboardImages');
+
+  const mapDiv = document.getElementById('map');
+
+  // Estado
+  let currentUser = null;
+  let posts = [];
+  let moodboardImgs = [];
+  let profilePicData = null;
+
+  // Splash animación
+  window.onload = () => {
+    setTimeout(() => {
+      splash.classList.add('hidden');
+      setTimeout(() => {
+        splash.style.display = 'none';
+      }, 800);
+    }, 2000);
+  };
+
+  // Mostrar página
+  function showPage(pageId) {
+    pages.forEach(p => {
+      if (p.id === pageId) {
+        p.classList.add('active');
+        if(pageId === 'map') {
+          mapDiv.style.display = 'block';
+          if(!mapDiv.innerHTML.trim()) {
+            loadMap();
+          }
+        } else {
+          mapDiv.style.display = 'none';
+        }
+      } else {
+        p.classList.remove('active');
+      }
+    });
+    navButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.target === pageId);
+    });
+  }
+
+  // Login submit
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    // Para demo, aceptamos cualquier usuario y contraseña no vacía
+    if(usernameInput.value.trim() && passwordInput.value.trim()) {
+      currentUser = usernameInput.value.trim();
+      nav.style.display = 'flex';
+      loginPage.classList.remove('active');
+      showPage('feed');
+      updateProfile();
+    } else {
+      alert('Por favor ingresa usuario y contraseña');
+    }
+  });
+
+  // Navegación botones
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      showPage(btn.dataset.target);
+    });
+  });
+
+  // Logout
+  logoutBtn.addEventListener('click', () => {
+    currentUser = null;
+    nav.style.display = 'none';
+    loginPage.classList.add('active');
+    showPage('login');
+    clearAll();
+  });
+
+  // Crear post
+  document.getElementById('uploadForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const url = document.getElementById('postImage').value.trim();
+    const text = document.getElementById('postText').value.trim();
+    if(url && text) {
+      posts.unshift({user: currentUser, img: url, text, date: new Date()});
+      renderPosts();
+      updateProfile();
+      e.target.reset();
+    } else {
+      alert('Completa ambos campos');
+    }
+  });
+
+  // Render posts en feed y perfil
+  function renderPosts() {
+    postsContainer.innerHTML = posts.map(post => `
+      <div class="post">
+        <img src="${post.img}" alt="Imagen post" />
+        <p>${post.text}</p>
+        <small>Por ${post.user} - ${post.date.toLocaleString()}</small>
+      </div>
+    `).join('');
+
+    // Posts propios en perfil
+    const userPosts = posts.filter(p => p.user === currentUser);
+    profilePosts.innerHTML = userPosts.map(post => `
+      <div class="post">
+        <img src="${post.img}" alt="Imagen post" />
+        <p>${post.text}</p>
+        <small>${post.date.toLocaleDateString()}</small>
+      </div>
+    `).join('');
+  }
+
+  // Actualizar info perfil
+  function updateProfile() {
+    profileUsername.textContent = currentUser || '';
+    const userPostsCount = posts.filter(p => p.user === currentUser).length;
+    postCount.textContent = userPostsCount;
+    followersCount.textContent = Math.floor(Math.random() * 100); // Demo random
+    followingCount.textContent = Math.floor(Math.random() * 100); // Demo random
+
+    if(profilePicData) {
+      profilePicPreview.src = profilePicData;
+      profilePicPreview.style.display = 'block';
+    } else {
+      profilePicPreview.style.display = 'none';
+    }
+  }
+
+  // Subir foto de perfil
+  profilePicInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        profilePicData = reader.result;
+        updateProfile();
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Moodboard agregar imagen
+  moodboardForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const url = moodboardImageUrl.value.trim();
+    if(url) {
+      moodboardImgs.push(url);
+      renderMoodboard();
+      moodboardForm.reset();
+    } else {
+      alert('Ingresa una URL válida');
+    }
+  });
+
+  // Render moodboard
+  function renderMoodboard() {
+    moodboardImages.innerHTML = moodboardImgs.map(url => `<img src="${url}" alt="Imagen moodboard" />`).join('');
+  }
+
+  // Limpiar todo en logout
+  function clearAll() {
+    posts = [];
+    moodboardImgs = [];
+    profilePicData = null;
+    postsContainer.innerHTML = '';
+    profilePosts.innerHTML = '';
+    moodboardImages.innerHTML = '';
+    profilePicPreview.style.display = 'none';
+  }
+
+  // Mapa (Google Maps embed simple)
+  function loadMap() {
+    // Usamos iframe embed básico para demo
+    mapDiv.innerHTML = `<iframe
+      width="100%"
+      height="300"
+      style="border:0; border-radius:14px;"
+      loading="lazy"
+      allowfullscreen
+      src="https://www.google.com/maps/embed/v1/place?key=AIzaSyD-EXAMPLE-KEY&q=Panama+City+Panama">
+    </iframe>`;
+  }
+</script>
+
+</body>
+</html>
